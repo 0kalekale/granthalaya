@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-cargo build --release
-cp target/release/granthalaya granthalaya/granthalaya
+rustc src/main.rs -o granthalaya/granthalaya
