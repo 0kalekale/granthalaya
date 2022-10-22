@@ -16,4 +16,33 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-fn main() {println!("placeholder");} 
+use std::env;
+
+fn help() {
+		print!("granthalaya: sanskrit library for your Linux terminal 
+usage: 
+	./granthalaya [text_name] [starting verse] [ending verse] 
+			'or'
+	./granthalaya [text_name] [verse]
+verse:
+	format: \"bbcccvvv\" where b is book number(parva/kanda), c is chapter number(adhaya) and v is verse number(shlok)	
+	example: the starting verse of the gita would be 06023001 (06th book, 023th chapter 001st verse)
+texts:
+	mahabharata
+	ramayana\n");
+}
+
+fn main() {
+	let argv: Vec<String> = env::args().collect();
+	let argc = argv.len();
+	
+	if argc==3 {
+		println!("text:{} verse:{}", argv[1], argv[2]);
+	}
+	else if argc==4 {
+		println!("text:{} starting verse:{} ending verse:{}", argv[1], argv[2], argv[3]);
+	}
+	else {
+		help();
+	}
+}
