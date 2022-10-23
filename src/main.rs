@@ -17,6 +17,7 @@
 */
 
 use std::env;
+use std::process;
 
 fn help() {
 		print!("granthalaya: sanskrit library for your Linux terminal 
@@ -32,17 +33,44 @@ texts:
 	ramayana\n");
 }
 
+fn parse_verse(verse: &String) {
+	let _verse_number: i32;
+	match verse.parse::<i32>() {
+		Ok(n) => _verse_number=n,
+		Err(_e) => {
+			eprintln!("Invalid Verse");
+			help();
+			process::exit(1);
+		} 
+	};
+	
+	match verse.len() {
+		8 => () ,
+		_ => {
+			eprintln!("Invalid Verse");
+			help();
+			process::exit(1);
+		}
+	};
+}
+	
+fn single_verse(verse: &String) {
+	parse_verse(verse);
+}
+
+fn multiple_verses(s_verse: &String, e_verse: &String) {
+	parse_verse(s_verse);
+	parse_verse(e_verse);
+}
+	
 fn main() {
+	
 	let argv: Vec<String> = env::args().collect();
 	let argc = argv.len();
 	
-	if argc==3 {
-		println!("text:{} verse:{}", argv[1], argv[2]);
-	}
-	else if argc==4 {
-		println!("text:{} starting verse:{} ending verse:{}", argv[1], argv[2], argv[3]);
-	}
-	else {
-		help();
+	match argc {
+		3 => single_verse(&argv[2]),
+		4 => multiple_verses(&argv[2], &argv[3]),
+		_ => help(),
 	}
 }
