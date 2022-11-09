@@ -18,6 +18,8 @@
 
 use std::env;
 use std::process;
+use std::fs::File;
+use std::io::prelude::*;
 
 fn help() {
 		print!("granthalaya: sanskrit library for your Linux terminal 
@@ -54,11 +56,31 @@ fn parse_verse(verse: &String) {
 	};
 }
 	
-fn single_verse(verse: &String) {
+fn single_verse(verse: &String, text: &String) {
 	parse_verse(verse);
+	println!("book: {} chapter: {} verse: {} of text {}", &verse[0..2], &verse[2..5], &verse[6..8], &text);
+	let filename: String = format!("library/{}/{}{}.txt", &text, &text, &verse[0..2]);
+	
+	let mut file = File::open(filename);
+	let mut contents = String::new();
+	file.expect("fail").read_to_string(&mut contents);
+	
+	let ver_str: &str = &verse.to_owned(); 
+	let mut ndl = 0;
+	for tok in contents.split("\n") {
+		if(ndl==1) {
+			println!("{}", tok);
+		}
+		if(String::from(tok).contains(verse)) {
+			ndl = 1;
+		}
+		else {
+			ndl = 0;
+		}	
+	}
 }
 
-fn multiple_verses(s_verse: &String, e_verse: &String) {
+fn multiple_verses(s_verse: &String, e_verse: &String, text: &String) {
 	parse_verse(s_verse);
 	parse_verse(e_verse);
 }
@@ -68,9 +90,25 @@ fn main() {
 	let argv: Vec<String> = env::args().collect();
 	let argc = argv.len();
 	
+	if argc<=2 {
+		help();
+		process::exit(1);
+	}	
+	let text: String; 
+	if(argv[1].eq("mahabharata")) {
+		text = String::from("MBh");
+	}
+	else if(argv[1].eq("ramayana")) {
+		text = String::from("Ram"); 
+	}
+	else {
+		help();
+		process::exit(1);
+	}		
+
 	match argc {
-		3 => single_verse(&argv[2]),
-		4 => multiple_verses(&argv[2], &argv[3]),
+		3 => single_verse(&argv[2], &text),
+		4 => multiple_verses(&argv[2], &argv[3], &text),
 		_ => help(),
 	}
 }
